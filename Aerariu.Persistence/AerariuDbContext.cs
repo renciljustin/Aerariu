@@ -1,4 +1,4 @@
-﻿using Aerariu.Core.models;
+﻿using Aerariu.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aerariu.Persistence

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Aerariu.Core.models
+namespace Aerariu.Core.Models
 {
     [Table("UserRoles")]
     public class UserRole

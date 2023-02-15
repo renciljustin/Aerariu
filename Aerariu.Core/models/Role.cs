@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aerariu.Core.models
+namespace Aerariu.Core.Models
 {
     [Table("Roles")]
     public class Role : BaseEntity
