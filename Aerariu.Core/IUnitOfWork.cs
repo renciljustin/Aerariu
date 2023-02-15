@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aerariu.Core.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Aerariu.Core
 {
     public interface IUnitOfWork
     {
+        IUserRepository UserRepository { get; }
         void Commit();
         void Rollback();
         Task CommitAsync();
