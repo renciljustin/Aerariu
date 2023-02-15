@@ -27,7 +27,6 @@ namespace Aerariu.Core.Models
     {
         Superuser = 0,
         Administrator = 1,
-        Moderator = 2,
-        User = 3
+        User = 2
     }
 }
