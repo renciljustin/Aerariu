@@ -5,6 +5,12 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aerariu.API", "Aerariu.API\Aerariu.API.csproj", "{961EF329-FD74-4B13-89B1-559F84CA41A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aerariu.Core", "Aerariu.Core\Aerariu.Core.csproj", "{0CF0D681-A79E-4162-A3B6-A92A73F44454}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aerariu.Persistence", "Aerariu.Persistence\Aerariu.Persistence.csproj", "{5F9686E6-0696-49EC-964D-1498917A9D33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aerariu.Utils", "Aerariu.Utils\Aerariu.Utils.csproj", "{7862785A-2934-4584-A358-6A65DDB2CD9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{961EF329-FD74-4B13-89B1-559F84CA41A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{961EF329-FD74-4B13-89B1-559F84CA41A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{961EF329-FD74-4B13-89B1-559F84CA41A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CF0D681-A79E-4162-A3B6-A92A73F44454}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CF0D681-A79E-4162-A3B6-A92A73F44454}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CF0D681-A79E-4162-A3B6-A92A73F44454}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CF0D681-A79E-4162-A3B6-A92A73F44454}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F9686E6-0696-49EC-964D-1498917A9D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F9686E6-0696-49EC-964D-1498917A9D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F9686E6-0696-49EC-964D-1498917A9D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F9686E6-0696-49EC-964D-1498917A9D33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7862785A-2934-4584-A358-6A65DDB2CD9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7862785A-2934-4584-A358-6A65DDB2CD9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7862785A-2934-4584-A358-6A65DDB2CD9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7862785A-2934-4584-A358-6A65DDB2CD9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
