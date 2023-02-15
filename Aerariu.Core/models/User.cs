@@ -12,6 +12,17 @@ namespace Aerariu.Core.Models
     public class User : BaseEntity
     {
         [Required]
+        [StringLength(maximumLength: 32, ErrorMessage = "Must be at least 4 to 32 characters.", MinimumLength = 4)]
+        public string Username { get; set; }
+
+        [Required]
+        public string PasswordHash { get; set; }
+
+        [Required]
+        public string PasswordSalt { get; set; }
+
+        [Required]
+        [StringLength(maximumLength: 64, ErrorMessage = "Must be at least 2 to 64 characters.", MinimumLength = 2)]
         public string Name { get; set; }
         [Required]
         [EmailAddress]

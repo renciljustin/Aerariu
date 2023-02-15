@@ -13,8 +13,10 @@ namespace Aerariu.Core.Models
     public class Role : BaseEntity
     {
         [Required]
+        [StringLength(32)]
         public string RoleName { get; set; }
         [Required]
+        [Range(1, 10)]
         [DefaultValue(RoleLevel.User)]
         public RoleLevel RoleLevel { get; set; }
 
