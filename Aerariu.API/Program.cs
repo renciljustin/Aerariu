@@ -1,4 +1,5 @@
 
+using Aerariu.Core;
 using Aerariu.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,7 +33,6 @@ namespace Aerariu.API
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
@@ -43,7 +43,7 @@ namespace Aerariu.API
             builder.Services.AddDbContext<AerariuDbContext>(options =>
                             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            //builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }
