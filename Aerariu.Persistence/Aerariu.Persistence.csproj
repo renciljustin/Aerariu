@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aerariu.Core\Aerariu.Core.csproj" />
+    <ProjectReference Include="..\Aerariu.Utils\Aerariu.Utils.csproj" />
   </ItemGroup>
 
 </Project>
