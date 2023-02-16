@@ -1,8 +1,8 @@
 ﻿using Aerariu.API.Dtos;
 using Aerariu.Core;
 using Aerariu.Core.Models;
+using Aerariu.Utils.Constants;
 using Aerariu.Utils.Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -30,7 +30,7 @@ namespace Aerariu.API.Controllers
             var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
             if (user != null)
-                return BadRequest("Username is already used.");
+                return BadRequest(ErrorMessage.User_DuplicateUsername);
 
             var userToCreate = new User
             {
@@ -48,15 +48,7 @@ namespace Aerariu.API.Controllers
 
             await _uow.CommitAsync();
 
-            var token = await GenerateSecurityToken(userToCreate);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var accessToken = tokenHandler.WriteToken(token);
-
-            return CreatedAtRoute("", new
-            {
-                user = userToCreate.Username,
-                token = accessToken
-            });
+            return Ok(ResponseMessage.RegistrationSuccess);
         }
 
         [HttpPost("Login")]
@@ -65,25 +57,70 @@ namespace Aerariu.API.Controllers
             var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
             if (user is null)
-                return Unauthorized("Invalid username.");
+                return Unauthorized(ErrorMessage.User_InvalidCredentials);
 
             var passwordCheck = await _uow.UserRepository.CheckPasswordAsync(user, dto.Password);
 
             if (!passwordCheck)
-                return Unauthorized("Invalid password.");
+                return Unauthorized(ErrorMessage.User_InvalidCredentials);
 
-            var token = await GenerateSecurityToken(user);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var accessToken = tokenHandler.WriteToken(token);
+            var accessToken = await GenerateAccessTokenAsync(user);
+            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
+
+            await _uow.CommitAsync();
 
             return Ok(new
             {
                 user = user.Username,
-                accessToken
+                accessToken,
+                refreshToken = refreshToken.Token,
             });
         }
 
-        private async Task<JwtSecurityToken> GenerateSecurityToken(User user)
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromForm] string refreshToken)
+        {
+            var refreshTokenDb = await _uow.RefreshTokenRepository.GetAsync(rt => rt.Token == refreshToken);
+
+            if (refreshTokenDb is null)
+                return UnprocessableEntity(ErrorMessage.RefreshToken_Invalid);
+
+            _uow.RefreshTokenRepository.Revoke(refreshTokenDb);
+            await _uow.CommitAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromForm] string refreshToken)
+        {
+            var refreshTokenDb = await _uow.RefreshTokenRepository.GetAsync(rt => rt.Token == refreshToken && !rt.IsRevoked);
+
+            if (refreshTokenDb is null)
+                return Unauthorized(ErrorMessage.RefreshToken_Invalid);
+
+            if (refreshTokenDb.ValidTo <= DateTime.UtcNow)
+                return Unauthorized(ErrorMessage.RefreshToken_Expired);
+
+            var userDb = await _uow.UserRepository.GetAsync(user => user.Id == refreshTokenDb.UserId);
+
+            if (userDb is null)
+                return UnprocessableEntity(ErrorMessage.User_NotFound);
+
+            _uow.RefreshTokenRepository.Refresh(refreshTokenDb);
+
+            var accessToken = await GenerateAccessTokenAsync(userDb);
+
+            await _uow.CommitAsync();
+
+            return Ok(new
+            {
+                accessToken,
+                refreshToken,
+            });
+        }
+
+        private async Task<string> GenerateAccessTokenAsync(User user)
         {
             var claims = await RenderClaimsAsync(user);
             var credentials = RenderCredentials();
@@ -96,7 +133,10 @@ namespace Aerariu.API.Controllers
                 signingCredentials: credentials
             );
 
-            return securityToken;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var accessToken = tokenHandler.WriteToken(securityToken);
+
+            return accessToken;
         }
 
         private async Task<List<Claim>> RenderClaimsAsync(User user)
@@ -120,6 +160,12 @@ namespace Aerariu.API.Controllers
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             return credentials;
+        }
+
+        private async Task<RefreshToken> GenerateRefreshTokenAsync(Guid userId)
+        {
+            var refreshToken = await _uow.RefreshTokenRepository.CreateTokenAsync(userId);
+            return refreshToken;
         }
     }
 }
