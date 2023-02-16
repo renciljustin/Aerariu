@@ -1,11 +1,6 @@
 ﻿using Aerariu.Core.Models;
 using Aerariu.Core.Repositories;
 using Aerariu.Utils.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Aerariu.Persistence.Repositories
 {
