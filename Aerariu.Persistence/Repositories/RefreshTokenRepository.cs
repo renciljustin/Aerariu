@@ -27,6 +27,8 @@ namespace Aerariu.Persistence.Repositories
                 IsRevoked = false
             };
 
+            await this.AddAsync(refreshToken);
+
             return refreshToken;
         }
 
@@ -34,11 +36,15 @@ namespace Aerariu.Persistence.Repositories
         {
             token.ValidTo = DateTime.UtcNow.AddHours(24);
             token.TotalRefresh++;
+
+            this.Update(token);
         }
 
         public void Revoke(RefreshToken token)
         {
             token.IsRevoked = true;
+
+            this.Update(token);
         }
     }
 }
