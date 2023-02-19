@@ -1,4 +1,5 @@
 
+using Aerariu.API.Utils.Mappings;
 using Aerariu.API.Utils.Middleware;
 using Aerariu.Core;
 using Aerariu.Persistence;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Aerariu.API
 {
@@ -18,8 +20,11 @@ namespace Aerariu.API
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options => {
@@ -34,6 +39,8 @@ namespace Aerariu.API
                     Description = "Enter the token in the text input below."
                 });
             });
+
+            builder.Services.AddAutoMapper(typeof(AuthProfile));
 
             ConfigureDbContext(builder);
 
