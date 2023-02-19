@@ -3,6 +3,7 @@ using Aerariu.Core;
 using Aerariu.Core.Models;
 using Aerariu.Utils.Constants;
 using Aerariu.Utils.Helpers;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,37 +17,37 @@ namespace Aerariu.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUnitOfWork _uow;
+        private readonly IMapper _mapper;
         private readonly IConfiguration _config;
 
-        public AuthController(IUnitOfWork uow, IConfiguration config)
+        public AuthController(IUnitOfWork uow, IMapper mapper, IConfiguration config)
         {
             _uow = uow;
+            _mapper = mapper;
             _config = config;
         }
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegisterDto dto)
         {
+            // roleid for user: 9d959dff-deb9-4603-bfe8-6057e5714f4b
             var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
             if (user != null)
                 return BadRequest(ErrorMessage.User_DuplicateUsername);
 
-            var userToCreate = new User
-            {
-                Username = dto.Username,
-                Name = dto.Name,
-                Email = dto.Email,
-                UserRoles = new List<UserRole>
-                {
-                    //new UserRole { RoleId = Guid.Parse("a5615233-b9c9-4f37-ba3a-ab4544def138") }, //admin user
-                    new UserRole { RoleId = Guid.Parse("9d959dff-deb9-4603-bfe8-6057e5714f4b") } //ordinary user
-                }
-            };
+            var userToCreate = _mapper.Map<User>(dto);
 
             await _uow.UserRepository.CreateUserAsync(userToCreate, dto.Password);
 
             await _uow.CommitAsync();
+
+            // FOR TESTING ONLY: Returns the user object.
+            //return Ok(new
+            //{
+            //    message = ResponseMessage.RegistrationSuccess,
+            //    data = userToCreate
+            //});
 
             return Ok(ResponseMessage.RegistrationSuccess);
         }
