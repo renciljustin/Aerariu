@@ -1,0 +1,78 @@
+.container {
+  --object-height: 150px;
+  height: 100vh;
+  position: fixed;
+  width: 100vw;
+  top: 0;
+  z-index: -99999;
+}
+
+.object {
+  border-radius: 10px;
+
+  height: 0;
+  position: absolute;
+  width: 0;
+  text-align: center;
+}
+
+.objectFont {
+  font-size: 3rem;
+  line-height: var(--object-height);
+}
+
+.keyEsc {
+  left: 50px;
+  height: var(--object-height);
+  transform: rotate(30deg) translate(-50%, -50%);
+  width: var(--object-height);
+  top: 120px;
+}
+
+.keyEnter {
+  height: var(--object-height);
+  right: -150px;
+  transform: rotate(-25deg) translate(-50%, -50%);
+  top: 40%;
+  width: calc(var(--object-height) * 2.25);
+}
+
+.keySpacebar {
+  bottom: -120px;
+  height: var(--object-height) translate(-50%, -50%);
+  left: 55%;
+  transform: rotate(10deg) translate(-50%, -50%);
+  width: calc(var(--object-height) * 6.25);
+}
+
+.keyW {
+  bottom: 300px;
+  height: var(--object-height);
+  left: 140px;
+  transform: rotate(35deg) translate(-50%, -50%);
+  width: var(--object-height);
+}
+
+.keyA {
+  bottom: 125px;
+  height: var(--object-height);
+  left: 75px;
+  transform: rotate(-20deg) translate(-50%, -50%);
+  width: var(--object-height);
+}
+
+.keyS {
+  bottom: 140px;
+  height: var(--object-height);
+  left: 225px;
+  transform: rotate(-5deg) translate(-50%, -50%);
+  width: var(--object-height);
+}
+
+.keyD {
+  bottom: 0;
+  height: var(--object-height);
+  left: 300px;
+  transform: rotate(15deg) translate(-50%, -50%);
+  width: var(--object-height);
+}

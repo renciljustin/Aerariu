@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { Fragment } from 'react';
+import BackgroundObjects from '../ui/BackgroundObjects';
 import Footer from '../ui/Footer';
 import Navbar from '../ui/Navbar';
 
@@ -19,6 +20,7 @@ const Layout = ({ children }: React.PropsWithChildren) => {
       <footer>
         <Footer />
       </footer>
+      <BackgroundObjects />
     </Fragment>
   );
 };
