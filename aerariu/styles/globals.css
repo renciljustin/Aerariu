@@ -46,8 +46,6 @@
 
 @layer base {
   html {
-    --tw-text-opacity: 1;
-    color: rgb(31 41 55 / var(--tw-text-opacity));
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 16px;
   }
@@ -58,8 +56,6 @@
   h4,
   h5,
   h6 {
-    --tw-text-opacity: 1;
-    color: rgb(31 41 55 / var(--tw-text-opacity));
     font-family: 'Fredoka', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 }
