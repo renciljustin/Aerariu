@@ -3,10 +3,13 @@ import { createWrapper } from 'next-redux-wrapper';
 import { isDevelopment } from '../utils/common';
 import { apiSlice } from './api';
 
+import authReducer from './reducers/auth-slice';
+
 export const makeStore = () =>
   configureStore({
     reducer: {
       [apiSlice.reducerPath]: apiSlice.reducer,
+      auth: authReducer,
     },
     devTools: isDevelopment(),
   });
