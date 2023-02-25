@@ -25,7 +25,7 @@ const Navbar = () => {
               <RxDividerVertical className="inline-block text-3xl" />
             </li>
             <li className="inline-block py-3 transition-colors hover:text-pink-400">
-              <Link href="/account">Login</Link>
+              <Link href="/login">Login</Link>
             </li>
           </ul>
           <ul className="col-span-2 lg:col-span-1 text-center">
