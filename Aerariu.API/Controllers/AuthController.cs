@@ -30,13 +30,23 @@ namespace Aerariu.API.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRegisterDto dto)
         {
-            // roleid for user: 9d959dff-deb9-4603-bfe8-6057e5714f4b
             var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
             if (user != null)
                 return BadRequest(ErrorMessage.User_DuplicateUsername);
 
             var userToCreate = _mapper.Map<User>(dto);
+
+            if (userToCreate.UserRoles is null)
+            {
+                userToCreate.UserRoles = new List<UserRole>
+                {
+                    new UserRole
+                    {
+                        RoleId = Guid.Parse("9d959dff-deb9-4603-bfe8-6057e5714f4b") //user role
+                    }
+                };
+            }
 
             await _uow.UserRepository.CreateUserAsync(userToCreate, dto.Password);
 

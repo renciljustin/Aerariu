@@ -20,8 +20,5 @@ namespace Aerariu.API.Dtos
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        [Required]
-        public List<Guid> UserRoles { get; set; }
     }
 }
