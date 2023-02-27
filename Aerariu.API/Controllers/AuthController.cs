@@ -1,4 +1,6 @@
 ﻿using Aerariu.API.Dtos;
+using Aerariu.API.Lib.Middleware;
+using Aerariu.API.Lib.Middleware.Response;
 using Aerariu.Core;
 using Aerariu.Core.Models;
 using Aerariu.Utils.Constants;
@@ -59,7 +61,11 @@ namespace Aerariu.API.Controllers
             //    data = userToCreate
             //});
 
-            return Ok(ResponseMessage.RegistrationSuccess);
+            return Ok(new GenericResponse
+            {
+                Message = ResponseMessage.RegistrationSuccess,
+                StatusCode = StatusCodes.Status200OK
+            });
         }
 
         [HttpPost("Login")]
@@ -68,24 +74,36 @@ namespace Aerariu.API.Controllers
             var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
             if (user is null)
-                return Unauthorized(ErrorMessage.User_InvalidCredentials);
+                return Unauthorized(new GenericResponse
+                {
+                    Message = ErrorMessage.User_InvalidCredentials,
+                    StatusCode = StatusCodes.Status401Unauthorized
+                });
 
             var passwordCheck = await _uow.UserRepository.CheckPasswordAsync(user, dto.Password);
 
             if (!passwordCheck)
-                return Unauthorized(ErrorMessage.User_InvalidCredentials);
+                return Unauthorized(new GenericResponse {
+                    Message = ErrorMessage.User_InvalidCredentials,
+                    StatusCode = StatusCodes.Status401Unauthorized
+                });
 
             var accessToken = await GenerateAccessTokenAsync(user);
             var refreshToken = await GenerateRefreshTokenAsync(user.Id);
 
             await _uow.CommitAsync();
 
-            return Ok(new
+            var response = new ResponseWithData<AuthorizationToken>
             {
-                user = user.Username,
-                accessToken,
-                refreshToken = refreshToken.Token,
-            });
+                Message = ResponseMessage.LoginSuccess(user.Username),
+                StatusCode = StatusCodes.Status200OK,
+                ResultData = new AuthorizationToken
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken.Token
+                }
+            };
+            return Ok(response);
         }
 
         [HttpPost("Logout")]
@@ -94,7 +112,11 @@ namespace Aerariu.API.Controllers
             var refreshTokenDb = await _uow.RefreshTokenRepository.GetAsync(rt => rt.Token == refreshToken);
 
             if (refreshTokenDb is null)
-                return UnprocessableEntity(ErrorMessage.RefreshToken_Invalid);
+                return UnprocessableEntity(new GenericResponse
+                {
+                    Message = ErrorMessage.RefreshToken_Invalid,
+                    StatusCode = StatusCodes.Status422UnprocessableEntity
+                });
 
             _uow.RefreshTokenRepository.Revoke(refreshTokenDb);
             await _uow.CommitAsync();
@@ -108,15 +130,27 @@ namespace Aerariu.API.Controllers
             var refreshTokenDb = await _uow.RefreshTokenRepository.GetAsync(rt => rt.Token == refreshToken && !rt.IsRevoked);
 
             if (refreshTokenDb is null)
-                return Unauthorized(ErrorMessage.RefreshToken_Invalid);
+                return Unauthorized(new GenericResponse
+                {
+                    Message = ErrorMessage.RefreshToken_Invalid,
+                    StatusCode = StatusCodes.Status401Unauthorized
+                });
 
             if (refreshTokenDb.ValidTo <= DateTime.UtcNow)
-                return Unauthorized(ErrorMessage.RefreshToken_Expired);
+                return Unauthorized(new GenericResponse
+                {
+                    Message = ErrorMessage.RefreshToken_Expired,
+                    StatusCode = StatusCodes.Status401Unauthorized
+                });
 
             var userDb = await _uow.UserRepository.GetAsync(user => user.Id == refreshTokenDb.UserId);
 
             if (userDb is null)
-                return UnprocessableEntity(ErrorMessage.User_NotFound);
+                return UnprocessableEntity(new GenericResponse
+                {
+                    Message = ErrorMessage.User_NotFound,
+                    StatusCode = StatusCodes.Status422UnprocessableEntity
+                });
 
             _uow.RefreshTokenRepository.Refresh(refreshTokenDb);
 
@@ -124,11 +158,18 @@ namespace Aerariu.API.Controllers
 
             await _uow.CommitAsync();
 
-            return Ok(new
+            var response = new ResponseWithData<AuthorizationToken>
             {
-                accessToken,
-                refreshToken,
-            });
+                Message = ResponseMessage.GeneratedNewToken,
+                StatusCode = StatusCodes.Status200OK,
+                ResultData = new AuthorizationToken
+                {
+                    AccessToken = accessToken,
+                    RefreshToken = refreshToken
+                }
+            };
+
+            return Ok(response);
         }
 
         private async Task<string> GenerateAccessTokenAsync(User user)
