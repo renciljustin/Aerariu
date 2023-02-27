@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
-namespace Aerariu.API.Utils.Middleware
+namespace Aerariu.API.Lib.Middleware
 {
     public class AuthorizationHeaderParameterOperationFilter : IOperationFilter
     {

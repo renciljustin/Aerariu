@@ -1,6 +1,6 @@
 
-using Aerariu.API.Utils.Mappings;
-using Aerariu.API.Utils.Middleware;
+using Aerariu.API.Lib.Mappings;
+using Aerariu.API.Lib.Middleware;
 using Aerariu.Core;
 using Aerariu.Persistence;
 using Aerariu.Utils.Helpers;
@@ -58,6 +58,13 @@ namespace Aerariu.API
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseCors(options =>
+            {
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+                options.AllowAnyOrigin();
+            });
 
             app.MapControllers();
 
