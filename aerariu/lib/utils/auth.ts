@@ -1,7 +1,7 @@
 import { isDevelopment } from './common';
 
 export const getApiEndpoint = () =>
-  isDevelopment() ? 'http://localhost:5038/api' : 'https://aerariu.com/api';
+  isDevelopment() ? 'https://localhost:7232/api' : 'https://aerariu.com/api';
 
 export const getAuthEndpoint = () => [getApiEndpoint(), 'Auth'].join('/');
 

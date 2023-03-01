@@ -1,8 +1,8 @@
 export type Nullable<T> = T | null | undefined;
 
 export type StateStatus = {
-  loading: Nullable<boolean>;
-  success: Nullable<boolean>;
+  loading: boolean;
+  success: boolean;
   error: Nullable<string>;
 };
 
