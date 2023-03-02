@@ -35,7 +35,11 @@ namespace Aerariu.API.Controllers
             var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
             if (user != null)
-                return BadRequest(ErrorMessage.User_DuplicateUsername);
+                return BadRequest(new GenericResponse
+                {
+                    Message = ErrorMessage.User_DuplicateUsername,
+                    StatusCode = StatusCodes.Status400BadRequest
+                });
 
             var userToCreate = _mapper.Map<User>(dto);
 
