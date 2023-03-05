@@ -75,16 +75,16 @@ namespace Aerariu.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserLoginDto dto)
         {
-            var user = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
+            var userDb = await _uow.UserRepository.GetAsync(user => user.Username == dto.Username);
 
-            if (user is null)
+            if (userDb is null)
                 return Unauthorized(new GenericResponse
                 {
                     Message = ErrorMessage.User_InvalidCredentials,
                     StatusCode = StatusCodes.Status401Unauthorized
                 });
 
-            var passwordCheck = await _uow.UserRepository.CheckPasswordAsync(user, dto.Password);
+            var passwordCheck = await _uow.UserRepository.CheckPasswordAsync(userDb, dto.Password);
 
             if (!passwordCheck)
                 return Unauthorized(new GenericResponse {
@@ -92,17 +92,20 @@ namespace Aerariu.API.Controllers
                     StatusCode = StatusCodes.Status401Unauthorized
                 });
 
-            var accessToken = await GenerateAccessTokenAsync(user);
-            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
+            var accessToken = await GenerateAccessTokenAsync(userDb);
+            var refreshToken = await GenerateRefreshTokenAsync(userDb.Id);
 
             await _uow.CommitAsync();
 
-            var response = new ResponseWithData<AuthorizationToken>
+            var userInfo = _mapper.Map<UserInfo>(userDb);
+
+            var response = new ResponseWithData<AuthenticatedUser>
             {
-                Message = ResponseMessage.LoginSuccess(user.Username),
+                Message = ResponseMessage.LoginSuccess(userDb.Username),
                 StatusCode = StatusCodes.Status200OK,
-                ResultData = new AuthorizationToken
+                ResultData = new AuthenticatedUser
                 {
+                    User = userInfo,
                     AccessToken = accessToken,
                     RefreshToken = refreshToken.Token
                 }
@@ -162,12 +165,15 @@ namespace Aerariu.API.Controllers
 
             await _uow.CommitAsync();
 
-            var response = new ResponseWithData<AuthorizationToken>
+            var userInfo = _mapper.Map<UserInfo>(userDb);
+
+            var response = new ResponseWithData<AuthenticatedUser>
             {
                 Message = ResponseMessage.GeneratedNewToken,
                 StatusCode = StatusCodes.Status200OK,
-                ResultData = new AuthorizationToken
+                ResultData = new AuthenticatedUser
                 {
+                    User = userInfo,
                     AccessToken = accessToken,
                     RefreshToken = refreshToken
                 }
