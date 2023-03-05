@@ -1,5 +1,5 @@
-import { IUserRegisterDto } from '@/lib/dtos/UserDtos';
-import { logToConsole } from '@/lib/tools/logger';
+import { IUserLoginDto, IUserRegisterDto } from '@/lib/dtos/UserDtos';
+import { handleError } from '@/lib/tools/exception';
 import { getAuthEndpoint } from '@/lib/utils/auth';
 import { Nullable, StateWithStatus } from '@/lib/utils/common-types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -22,12 +22,29 @@ export const registerUser = createAsyncThunk(
           'Content-Type': 'application/json',
         },
       });
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        return rejectWithValue(error.response.data.message);
-      } else {
-        return rejectWithValue(error.message);
-      }
+    } catch (error) {
+      const result = handleError(error as Error);
+      return rejectWithValue(result);
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  'auth/login',
+  async ({ username, password }: IUserLoginDto, { rejectWithValue }) => {
+    try {
+      const data = await axios.post(
+        `${getAuthEndpoint()}/Login`,
+        { username, password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    } catch (error) {
+      const result = handleError(error as Error);
+      return rejectWithValue(result);
     }
   }
 );
@@ -52,7 +69,7 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      //register reducers
+      //register reducer
       .addCase(registerUser.pending, (state) => {
         state.status.loading = true;
         state.status.error = null;
@@ -62,10 +79,25 @@ const authSlice = createSlice({
         state.status.success = true;
         //TODO: Save userinfo - authentication token on payload or call login reducer instead.
       })
-      .addCase(registerUser.rejected, (state, { payload }: any) => {
+      .addCase(registerUser.rejected, (state, { payload }) => {
         state.status.loading = false;
         state.status.success = false;
-        state.status.error = payload;
+        state.status.error = payload as string;
+      })
+      //login reducer
+      .addCase(loginUser.pending, (state) => {
+        state.status.loading = true;
+        state.status.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, { payload }) => {
+        state.status.loading = false;
+        state.status.success = true;
+        //TODO: Save userinfo to payload
+      })
+      .addCase(loginUser.rejected, (state, { payload }) => {
+        state.status.loading = false;
+        state.status.success = false;
+        state.status.error = payload as string;
       });
   },
 });

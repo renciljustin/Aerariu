@@ -9,7 +9,7 @@ export type ResponseData<T> = {
 };
 
 export type MiddlewareErrorData = {
-  [key: string]: string[];
+  readonly [key: string]: string[];
 };
 
 export type MiddlewareErrorResponse = {
