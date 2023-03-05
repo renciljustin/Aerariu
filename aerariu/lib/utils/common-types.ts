@@ -41,6 +41,6 @@ export type StateStatus = {
 };
 
 export type StateWithStatus<T> = {
-  data: Nullable<T>;
+  data: T;
   status: StateStatus;
 };
