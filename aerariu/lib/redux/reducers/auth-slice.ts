@@ -1,7 +1,15 @@
-import { IUserLoginDto, IUserRegisterDto } from '@/lib/dtos/UserDtos';
+import { AuthTokenDto, IUserLoginDto, IUserRegisterDto } from '@/lib/dtos/auth';
 import { handleError } from '@/lib/tools/exception';
-import { getAuthEndpoint } from '@/lib/utils/auth';
-import { Nullable, StateWithStatus } from '@/lib/utils/common-types';
+import {
+  getAuthEndpoint,
+  setAccessToken,
+  setRefreshToken,
+} from '@/lib/utils/auth';
+import {
+  Nullable,
+  ResponseData,
+  StateWithStatus,
+} from '@/lib/utils/common-types';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState } from '../store';
@@ -33,7 +41,7 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async ({ username, password }: IUserLoginDto, { rejectWithValue }) => {
     try {
-      const data = await axios.post(
+      const response = await axios.post<ResponseData<AuthTokenDto>>(
         `${getAuthEndpoint()}/Login`,
         { username, password },
         {
@@ -42,6 +50,9 @@ export const loginUser = createAsyncThunk(
           },
         }
       );
+
+      setAccessToken(response.data.resultData.accessToken);
+      setRefreshToken(response.data.resultData.refreshToken);
     } catch (error) {
       const result = handleError(error as Error);
       return rejectWithValue(result);

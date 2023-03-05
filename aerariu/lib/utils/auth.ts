@@ -10,7 +10,18 @@ export const getAccessToken = () =>
     ? localStorage.getItem('access-token')
     : null;
 
-export const removeAccessToken = () => localStorage.removeItem('access-token');
-
 export const setAccessToken = (value: string) =>
   localStorage.setItem('access-token', value);
+
+export const removeAccessToken = () => localStorage.removeItem('access-token');
+
+export const getRefreshToken = () =>
+  typeof localStorage !== 'undefined'
+    ? localStorage.getItem('refresh-token')
+    : null;
+
+export const setRefreshToken = (value: string) =>
+  localStorage.setItem('refresh-token', value);
+
+export const removeRefreshToken = () =>
+  localStorage.removeItem('refresh-token');
