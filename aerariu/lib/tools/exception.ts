@@ -24,5 +24,5 @@ function isMiddlewareErrorResponse(data: any): data is MiddlewareErrorResponse {
 }
 
 function isResponseData(data: any): data is ResponseData<string> {
-  return typeof data === 'object' && 'resultData' in data;
+  return typeof data === 'object' && 'message' in data;
 }
