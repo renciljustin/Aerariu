@@ -131,7 +131,7 @@ namespace Aerariu.API.Controllers
             return Ok();
         }
 
-        [HttpPost("refresh-token")]
+        [HttpPost("Refresh-Token")]
         public async Task<IActionResult> RefreshToken([FromForm] string refreshToken)
         {
             var refreshTokenDb = await _uow.RefreshTokenRepository.GetAsync(rt => rt.Token == refreshToken && !rt.IsRevoked);
