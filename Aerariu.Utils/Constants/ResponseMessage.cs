@@ -2,6 +2,9 @@
 {
     public class ResponseMessage
     {
+        //Common
+        public const string Success = "Success!";
+
         //Auth
         public const string GeneratedNewToken = "Generated a new token.";
         public const string RegistrationSuccess = "Registered successfully.";

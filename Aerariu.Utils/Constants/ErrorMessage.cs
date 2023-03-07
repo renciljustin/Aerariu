@@ -8,5 +8,7 @@
 
         public const string RefreshToken_Expired = "The refresh token is expired.";
         public const string RefreshToken_Invalid = "The refresh token is invalid.";
+
+        public const string Token_Invalid = "The session is invalid.";
     }
 }

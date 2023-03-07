@@ -12,6 +12,7 @@ namespace Aerariu.API.Lib.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(obj => Guid.NewGuid()));
             //.ForMember(dest => dest.UserRoles, opt => opt.MapFrom(obj => obj.UserRoles.Select(role => new UserRole { RoleId = role })));
 
+            CreateMap<User, UserDetailDto>();
             CreateMap<User, UserInfo>();
         }
     }
